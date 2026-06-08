@@ -19,12 +19,26 @@ export const BackendProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     const controller = new AbortController();
 
+    if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_API_URL) {
+      setStatus('offline');
+      return;
+    }
+
+    const fallback = setTimeout(() => {
+      controller.abort();
+      setStatus('offline');
+    }, 4000);
+
     apiClient
       .get('/health', { signal: controller.signal, timeout: 3000 })
       .then(() => setStatus('online'))
-      .catch(() => setStatus('offline'));
+      .catch(() => setStatus('offline'))
+      .finally(() => clearTimeout(fallback));
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      clearTimeout(fallback);
+    };
   }, []);
 
   return (

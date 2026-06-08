@@ -39,7 +39,7 @@ jobs:
           # URL of the deployed backend (set in repo Settings → Secrets → Actions)
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           # e.g. /todo-app  (must match your GitHub repo name)
-          NEXT_PUBLIC_BASE_PATH: ${{ vars.NEXT_PUBLIC_BASE_PATH }}
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
           NODE_ENV: production
         run: npm run build
 
